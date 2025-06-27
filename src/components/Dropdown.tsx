@@ -40,7 +40,7 @@ export function Dropdown<TData, TValue extends string | number = string>({
 
     return (
         <div className="m-5">
-            <p className="mb-1 text-sm">{label}</p>
+            <p className="mb-3 text-sm">{label}</p>
             <select
                 className="w-3/4  rounded-md px-3 p-3 text-sm bg-neutral-200 border-0"
                 value={value ?? ''}

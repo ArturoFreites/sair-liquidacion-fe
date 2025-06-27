@@ -17,6 +17,7 @@ import ConceptPage from "../pages/concepts/ConceptPage";
 import ConceptCreatePage from "../pages/concepts/ConceptCreatePage";
 import ConceptUpdatePage from "../pages/concepts/ConceptUpdatePage";
 import SettlementPeriodPage from "../pages/settlementPeriod/SettlementPeriodPage";
+import SettlementPeriodCreatePage from "../pages/settlementPeriod/SettlementPeriodCreatePage";
 
 // ✅ Hook que verifica si hay token
 function useAuth() {
@@ -58,6 +59,7 @@ const privateRoutes = [
     { path: ROUTES.CREATE_CONCEPT, element: <ConceptCreatePage /> },
     { path: ROUTES.UPDATE_CONCEPT, element: <ConceptUpdatePage /> },
     { path: ROUTES.SETTLEMENT_PERIOD, element: <SettlementPeriodPage /> },
+    { path: ROUTES.CREATE_SETTLEMENT_PERIOD, element: <SettlementPeriodCreatePage /> },
 ];
 
 // ✅ AppRoutes con control de acceso

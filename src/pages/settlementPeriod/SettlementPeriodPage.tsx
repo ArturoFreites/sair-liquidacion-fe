@@ -1,6 +1,7 @@
 import ButtonNavigate from "../../components/ButtonNavigate";
 import Filters from "../../components/Filters";
 import Searcher from "../../components/Searcher";
+import SettlementPeriodTable from "../../components/settlementPeriod/SettlementPeriodTable";
 import { ROUTES } from "../../routes/ROUTES";
 
 function SettlementPeriodPage(){
@@ -17,7 +18,7 @@ function SettlementPeriodPage(){
                 <Filters/>
                 <Searcher/>
             </div>
-            
+            <SettlementPeriodTable/>
         </section>
     );
 }

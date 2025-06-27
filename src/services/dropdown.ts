@@ -56,3 +56,18 @@ export const MEDIO_LIQUIDACION = [
         name:"Depósito"
     }
 ]
+
+export const TIPO_PERIODO = [
+    {
+        id:1,
+        name:"Normal"
+    },
+    {
+        id:2,
+        name:"SAC 1"
+    },
+    {
+        id:3,
+        name:"SAC 2"
+    }
+]
