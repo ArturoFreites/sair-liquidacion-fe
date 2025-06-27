@@ -14,7 +14,6 @@ export const NAVLINKS = [
         options:[
             "conceptos",
             "novedades",
-            "sueldos",
             "ejecutar liquidación"
         ]
     },
@@ -35,6 +34,7 @@ export const NAVLINKS = [
         options:[
             "alta usuarios",
             "carga razón social",
+            "periodos"
         ]
     }
 ]

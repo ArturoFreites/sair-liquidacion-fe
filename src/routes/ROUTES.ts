@@ -6,5 +6,7 @@ export const ROUTES = {
     CONCEPTS:'/conceptos',
     CREATE_CONCEPT:'/conceptos/crear',
     UPDATE_CONCEPT:'/conceptos/actualizar/:id',
+    SETTLEMENT_PERIOD:'/periodos',
+    CREATE_SETTLEMENT_PERIOD:'/periodos/crear',
     LOGIN: '/login',
 };
