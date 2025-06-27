@@ -13,6 +13,9 @@ import PageNotfound from "../pages/PageNotfound";
 import Nav from "../components/Nav";
 import BundlesCreatePage from "../pages/bundles/BundlesCreatePage";
 import BundlesUpdatePage from "../pages/bundles/BundlesUpdatePage";
+import ConceptPage from "../pages/concepts/ConceptPage";
+import ConceptCreatePage from "../pages/concepts/ConceptCreatePage";
+import ConceptUpdatePage from "../pages/concepts/ConceptUpdatePage";
 
 // ✅ Hook que verifica si hay token
 function useAuth() {
@@ -50,6 +53,9 @@ const privateRoutes = [
     { path: ROUTES.BUNDLES, element: <BundlesPage /> },
     { path: ROUTES.CREATE_BUNDLE, element: <BundlesCreatePage /> },
     { path: ROUTES.UPDATE_BUNDLE, element: <BundlesUpdatePage /> },
+    { path: ROUTES.CONCEPTS, element: <ConceptPage /> },
+    { path: ROUTES.CREATE_CONCEPT, element: <ConceptCreatePage /> },
+    { path: ROUTES.UPDATE_CONCEPT, element: <ConceptUpdatePage /> },
 ];
 
 // ✅ AppRoutes con control de acceso
