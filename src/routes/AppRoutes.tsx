@@ -4,6 +4,7 @@ import {
     Route,
     Navigate,
     Outlet,
+    useLocation,
 } from "react-router-dom";
 import { ROUTES } from "./ROUTES";
 import LoginPage from "../pages/LoginPage";
@@ -13,23 +14,28 @@ import Nav from "../components/Nav";
 import BundlesCreatePage from "../pages/bundles/BundlesCreatePage";
 import BundlesUpdatePage from "../pages/bundles/BundlesUpdatePage";
 
-
+// ✅ Hook que verifica si hay token
 function useAuth() {
-    const token = localStorage.getItem("token");
-    return Boolean(token); // true = autenticado
+    return Boolean(localStorage.getItem("token"));
 }
 
+// ✅ Protege rutas privadas y guarda ubicación previa
 function RequireAuth() {
     const authed = useAuth();
-    return authed ? <Outlet /> : <Navigate to={ROUTES.LOGIN} replace />;
+    const location = useLocation();
+
+    return authed ? (
+        <Outlet />
+    ) : (
+        <Navigate to={ROUTES.LOGIN} replace state={{ from: location }} />
+    );
 }
 
+// ✅ Layout con navegación lateral y contenido
 function LayoutPrivate() {
     return (
-        <div className="flex h-screen">
+        <div className="flex h-full">
             <Nav />
-
-            {/* zona de contenido */}
             <main className="flex-1 overflow-y-auto p-6">
                 <Outlet />
             </main>
@@ -37,26 +43,26 @@ function LayoutPrivate() {
     );
 }
 
-const publicRoutes = [
-    { path: ROUTES.LOGIN, element: <LoginPage /> },
-];
+const publicRoutes = [{ path: ROUTES.LOGIN, element: <LoginPage /> }];
 
 const privateRoutes = [
+    { path: ROUTES.HOME, element: <BundlesPage /> },
     { path: ROUTES.BUNDLES, element: <BundlesPage /> },
     { path: ROUTES.CREATE_BUNDLE, element: <BundlesCreatePage /> },
     { path: ROUTES.UPDATE_BUNDLE, element: <BundlesUpdatePage /> },
 ];
 
+// ✅ AppRoutes con control de acceso
 export default function AppRoutes() {
     return (
         <Router>
             <Routes>
-                {/* -------- rutas públicas -------- */}
+                {/* Rutas públicas */}
                 {publicRoutes.map(({ path, element }) => (
                     <Route key={path} path={path} element={element} />
                 ))}
 
-                {/* -------- rutas privadas -------- */}
+                {/* Rutas privadas protegidas */}
                 <Route element={<RequireAuth />}>
                     <Route element={<LayoutPrivate />}>
                         {privateRoutes.map(({ path, element }) => (
@@ -65,7 +71,7 @@ export default function AppRoutes() {
                     </Route>
                 </Route>
 
-                {/* 404 */}
+                {/* Ruta 404 */}
                 <Route path="*" element={<PageNotfound />} />
             </Routes>
         </Router>

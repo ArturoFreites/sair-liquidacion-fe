@@ -1,14 +1,21 @@
 type Props = {
-    option: string
-}
+    option: string;
+    checked: boolean;
+    onChange: () => void;
+};
 
-function Checkbox({ option }: Props) {
+function Checkbox({ option, checked, onChange }: Props) {
     return (
         <div className="w-full m-5">
-            <p className="mb-3 text-sm" ></p>
-            <div className="flex items-center">
-                <input type="checkbox" id="option" checked />
-                <label>{option}</label>
+            <div className="flex items-center gap-2">
+                <input
+                    type="checkbox"
+                    id={option}
+                    checked={checked}
+                    onChange={onChange}
+                    className="accent-blue-800"
+                />
+                <label htmlFor={option}>{option}</label>
             </div>
         </div>
     );

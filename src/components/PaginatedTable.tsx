@@ -1,80 +1,80 @@
-// PaginatedTable.tsx
-import { useState, useMemo } from 'react';
 import { Table, type TableProps } from './Table';
+import Skeleton from 'react-loading-skeleton';
 
 interface PaginatedTableProps<T> extends Omit<TableProps<T>, 'data'> {
-    data: T[];
-    pageSize?: number;
+    data?: T[];
+    loading?: boolean;
+    page: number;
+    totalPages: number;
+    onPageChange: (page: number) => void;
 }
 
-export function PaginatedTable<T extends Record<string, unknown>>({
-    data,
+export function PaginatedTable<T>({
+    url,
+    data = [],
     columns,
     keyField,
     getRowTitle,
-    pageSize = 10,
+    loading = false,
+    page,
+    totalPages,
+    onPageChange,
 }: PaginatedTableProps<T>) {
-    /* --------- Estado --------- */
-    const [page, setPage] = useState(1);
-
-    const totalPages = Math.max(1, Math.ceil(data.length / pageSize));
-
-    /* --------- Segmenta datos --------- */
-    const pageData = useMemo(() => {
-        const start = (page - 1) * pageSize;
-        return data.slice(start, start + pageSize);
-    }, [data, page, pageSize]);
-
-    /* --------- Ventana deslizante de 5 botones --------- */
-    const windowStart = Math.floor((page - 1) / 5) * 5 + 1;
-    const windowEnd = Math.min(windowStart + 4, totalPages);
+    const windowSize = 5;
+    const windowStart = Math.floor(page / windowSize) * windowSize;
+    const windowEnd = Math.min(windowStart + windowSize - 1, totalPages - 1);
     const pageNumbers = Array.from(
         { length: windowEnd - windowStart + 1 },
-        (_, i) => windowStart + i,
+        (_, i) => windowStart + i
     );
 
-    /* --------- Handlers --------- */
-    const goTo = (p: number) => setPage(Math.min(Math.max(p, 1), totalPages));
-
     return (
-        <div>
-            {/* ---- Tabla ---- */}
-            <Table
-                data={pageData}
-                columns={columns}
-                keyField={keyField}
-                getRowTitle={getRowTitle}
-            />
+        <div className="w-full">
+            {loading ? (
+                <Skeleton rows={10} />
+            ) : data.length === 0 ? (
+                <p className="text-center text-gray-500 mt-4">No hay elementos para mostrar.</p>
+            ) : (
+                <>
+                    <Table<T>
+                        url={url}
+                        data={data}
+                        columns={columns}
+                        keyField={keyField}
+                        getRowTitle={getRowTitle}
+                    />
 
-            {/* ---- Paginación ---- */}
-            <div className="flex items-center justify-center gap-1">
-                <button
-                    onClick={() => goTo(page - 1)}
-                    disabled={page === 1}
-                    className="cursor-pointer px-2 py-1 text-sm rounded disabled:opacity-40 hover:text-neutral-600"
-                >
-                    Anterior
-                </button>
+                    <div className="flex items-center justify-center gap-1 mt-4">
+                        {page > 0 && (
+                            <button
+                                onClick={() => onPageChange(page - 1)}
+                                className="cursor-pointer px-2 py-1 text-sm rounded hover:text-neutral-600"
+                            >
+                                Anterior
+                            </button>
+                        )}
 
-                {pageNumbers.map((p) => (
-                    <button
-                        key={p}
-                        onClick={() => goTo(p)}
-                        className={`px-3 py-1 text-sm rounded ${p === page ? 'font-semibold bg-blue-900 text-white' : 'hover:bg-gray-200'
-                            }`}
-                    >
-                        {p}
-                    </button>
-                ))}
+                        {pageNumbers.map((p) => (
+                            <button
+                                key={p}
+                                onClick={() => onPageChange(p)}
+                                className={`px-3 py-1 text-sm rounded ${p === page ? 'font-semibold bg-blue-900 text-white' : 'hover:bg-gray-200'}`}
+                            >
+                                {p + 1}
+                            </button>
+                        ))}
 
-                <button
-                    onClick={() => goTo(page + 1)}
-                    disabled={page === totalPages}
-                    className="cursor-pointer px-2 py-1 text-sm rounded disabled:opacity-40 hover:bg-gray-200"
-                >
-                    Siguiente
-                </button>
-            </div>
+                        {page < totalPages - 1 && (
+                            <button
+                                onClick={() => onPageChange(page + 1)}
+                                className="cursor-pointer px-2 py-1 text-sm rounded hover:bg-gray-200"
+                            >
+                                Siguiente
+                            </button>
+                        )}
+                    </div>
+                </>
+            )}
         </div>
     );
 }
