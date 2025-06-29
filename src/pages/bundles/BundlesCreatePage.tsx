@@ -31,6 +31,7 @@ function BundlesCreatePage() {
     const [razonSocialId, setRazonSocialId] = useState<number | null>(null);
     const [costCenterId, setCostCenterId] = useState<number | null>(null);
     const [bankId, setBankId] = useState<number | null>(null);
+    const [salary, setSalary] = useState('');
 
     const { searchBanks, results: banks, loading: loadingBanks } = useBankSearcher();
     const { searchCostCenter, results: costCenter, loading: loadingCostCenter } = useCostCenterSearcher();
@@ -58,6 +59,8 @@ function BundlesCreatePage() {
         setRazonSocialId(null);
         setCostCenterId(null);
         setBankId(null);
+        setBankId(null);
+        setSalary('');
     };
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -71,6 +74,7 @@ function BundlesCreatePage() {
         if (!razonSocialId) missing.push('Razón social');
         if (!costCenterId) missing.push('Centro de costos');
         if (!bankId) missing.push('Banco');
+        if (!salary) missing.push('Sueldo');
 
         if (missing.length) {
             showError(
@@ -90,7 +94,8 @@ function BundlesCreatePage() {
             settleCommissions,
             socialReasonId: razonSocialId!,
             costCenterId: costCenterId!,
-            bankId: bankId!
+            bankId: bankId!,
+            salary: salary ? parseFloat(salary) : 0
         };
 
         const { success } = await createFile(payload);
@@ -165,6 +170,14 @@ function BundlesCreatePage() {
                     type="number"
                     value={salaryFactor}
                     onChange={(e) => setSalaryFactor(e.target.value)}
+                />
+
+                <Input
+                    label="Sueldo"
+                    placeHolder="Ingrese sueldo"
+                    type="number"
+                    value={salary}
+                    onChange={(e) => setSalary(e.target.value)}
                 />
 
                 <div className="col-span-1 md:col-span-3">

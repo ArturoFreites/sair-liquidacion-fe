@@ -18,6 +18,8 @@ import ConceptCreatePage from "../pages/concepts/ConceptCreatePage";
 import ConceptUpdatePage from "../pages/concepts/ConceptUpdatePage";
 import SettlementPeriodPage from "../pages/settlementPeriod/SettlementPeriodPage";
 import SettlementPeriodCreatePage from "../pages/settlementPeriod/SettlementPeriodCreatePage";
+import NoveltyPage from "../pages/novelty/NoveltyPage";
+import NoveltyDetailPage from "../pages/novelty/NoveltyDetailPage";
 
 // ✅ Hook que verifica si hay token
 function useAuth() {
@@ -60,6 +62,8 @@ const privateRoutes = [
     { path: ROUTES.UPDATE_CONCEPT, element: <ConceptUpdatePage /> },
     { path: ROUTES.SETTLEMENT_PERIOD, element: <SettlementPeriodPage /> },
     { path: ROUTES.CREATE_SETTLEMENT_PERIOD, element: <SettlementPeriodCreatePage /> },
+    { path: ROUTES.NOVELTY, element: <NoveltyPage /> },
+    { path: ROUTES.DETAIL_NOVELTY, element: <NoveltyDetailPage /> },
 ];
 
 // ✅ AppRoutes con control de acceso

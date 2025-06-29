@@ -13,4 +13,5 @@ export type FileRequest = {
     socialReasonId: number;
     costCenterId: number;
     bankId: number;
+    salary: number;
 };
