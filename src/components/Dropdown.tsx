@@ -18,6 +18,7 @@ export interface DropdownProps<
     getOptionLabel: (option: TData) => string;
     /** Texto gris cuando no hay selección */
     placeholder?: string;
+    className?:string
 }
 
 export function Dropdown<TData, TValue extends string | number = string>({
@@ -28,6 +29,7 @@ export function Dropdown<TData, TValue extends string | number = string>({
     getOptionLabel,
     getOptionValue,
     placeholder = 'Seleccione…',
+    className
 }: DropdownProps<TData, TValue>) {
     /* Handler controlado */
     const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -39,10 +41,10 @@ export function Dropdown<TData, TValue extends string | number = string>({
     };
 
     return (
-        <div className="m-5">
+        <div className={`m-5 ${className}`}>
             <p className="mb-3 text-sm">{label}</p>
             <select
-                className="w-3/4  rounded-md px-3 p-3 text-sm bg-neutral-200 border-0"
+                className="w-3/4  rounded-md px-3 p-3 text-sm bg-neutral-200 border-0 capitalize"
                 value={value ?? ''}
                 onChange={handleChange}
             >
@@ -53,7 +55,7 @@ export function Dropdown<TData, TValue extends string | number = string>({
                 {options.map((o) => {
                     const optValue = getOptionValue(o);
                     return (
-                        <option key={optValue.toString()} value={optValue}>
+                        <option className='capitalize' key={optValue.toString()} value={optValue}>
                             {getOptionLabel(o)}
                         </option>
                     );

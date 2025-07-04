@@ -1,15 +1,16 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.webp'
-import ButtonAction from '../components/ButtonAction';
 import Input from '../components/Input';
 import { useState, useEffect } from 'react';
 import { useLogin } from '../hook/user/useLogin';
+import { useErrorModalStore } from '../store/errorModalStore';
 
 function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { login } = useLogin();
+    const { showError } = useErrorModalStore.getState();
 
+    const { login, loading } = useLogin();
     const navigate = useNavigate();
     const location = useLocation();
     const from = location.state?.from?.pathname || "/";
@@ -22,11 +23,18 @@ function LoginPage() {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        if (!email.trim() || !password.trim()) {
+            showError("Debe completar el correo y la contraseña.", "caution");
+            return;
+        }
+
         const result = await login(email, password);
         if (result.success) {
             navigate(from, { replace: true });
         }
     };
+
 
     return (
         <section className='flex'>
@@ -50,16 +58,23 @@ function LoginPage() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
-                    <ButtonAction
-                        name="Ingresar"
-                        className="bg-blue-800 hover:bg-blue-700 text-white"
+
+                    <button
                         type="submit"
-                    />
-                    <Link to={"/"}>
-                        <p className='underline text-sm hover:text-gray-500 md:text-xs md:mt-1'>
-                            Recuperar Contraseña
-                        </p>
-                    </Link>
+                        disabled={loading}
+                        className={`
+							flex items-center justify-center gap-2
+							w-48 h-9 rounded-md px-4 py-2 my-6
+							text-sm font-medium transition-all duration-200
+							${loading ? "bg-neutral-400 cursor-not-allowed" : "bg-blue-800 hover:bg-blue-700 text-white"}
+						`}
+                    >
+                        {loading ? (
+                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        ) : (
+                            <span>Ingresar</span>
+                        )}
+                    </button>
                 </div>
             </form>
 

@@ -10,3 +10,26 @@ export function formatDate(dateString: string) {
         year: 'numeric',
     });
 }
+
+
+export const formatCurrency = (value: number) => {
+    return value.toLocaleString("es-AR", {
+        style: "currency",
+        currency: "ARS",
+        minimumFractionDigits: 2,
+    });
+};
+
+export const formatPeriod = (month: number, year: number) => {
+    const date = new Date(year, month - 1);
+    return date
+        .toLocaleDateString("es-AR", { year: "numeric", month: "long" })
+        .replace(" de ", " ");
+};
+
+export const formatDni = (dni?: string | number): string => {
+    if (!dni) return "-";
+    const raw = dni.toString().replace(/\D/g, "");
+    return raw.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+};
+

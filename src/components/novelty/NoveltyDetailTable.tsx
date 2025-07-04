@@ -11,12 +11,7 @@ import type { NoveltyRequest } from '../../types/request/NoveltyRequest';
 import NoveltyRow from './NoveltyRow';
 import NoveltyNewRow from './NoveltyNewRow';
 
-type Props = {
-    selectedPeriodId: number | null;
-};
-
-function NoveltyDetailTable({ selectedPeriodId }: Props) {
-
+function NoveltyDetailTable() {
     const { id } = useParams() as { id: string };
 
     const { searchNovelty, results: novelties, loading, error } = useNoveltySearch();
@@ -30,6 +25,11 @@ function NoveltyDetailTable({ selectedPeriodId }: Props) {
     const [editIndex, setEditIndex] = useState<number | null>(null);
     const [editData, setEditData] = useState<NoveltyRequest | null>(null);
     const [showNewRow, setShowNewRow] = useState(false);
+
+    // 🔽 Estados nuevos
+    const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
+    const [selectedYear, setSelectedYear] = useState<number | null>(null);
+
     const [newData, setNewData] = useState<NoveltyRequest>({
         id: '',
         conceptId: 0,
@@ -42,18 +42,26 @@ function NoveltyDetailTable({ selectedPeriodId }: Props) {
     });
 
     useEffect(() => {
-        if (!id) return;
-        const baseFilter = `eq=file.id:${id}`;
-        const periodFilter = selectedPeriodId ? `;eq=settlementPeriod.id:${selectedPeriodId}` : '';
-        searchNovelty(`${baseFilter}${periodFilter}`, currentPage);
         findSettlementPeriodLast();
-    }, [currentPage, id, selectedPeriodId]);
+    }, []);
 
     useEffect(() => {
-        const periodId = Number(selectedPeriodId ?? settlementPeriodLast?.id ?? 0);
-        setNewData(prev => ({ ...prev, settlementPeriodId: periodId }));
-    }, [settlementPeriodLast, selectedPeriodId]);
+        if (settlementPeriodLast) {
+            setSelectedMonth(settlementPeriodLast.month);
+            setSelectedYear(settlementPeriodLast.year);
+            setNewData(prev => ({
+                ...prev,
+                settlementPeriodId: settlementPeriodLast.id
+            }));
+        }
+    }, [settlementPeriodLast]);
 
+    useEffect(() => {
+        if (!id || !selectedMonth || !selectedYear) return;
+        const baseFilter = `eq=file.id:${id}`;
+        const periodFilter = `&eq=settlementPeriod.month:${selectedMonth}&eq=settlementPeriod.year:${selectedYear}`;
+        searchNovelty(`${baseFilter}${periodFilter}`, currentPage);
+    }, [currentPage, id, selectedMonth, selectedYear]);
 
     const handleSave = async (noveltyId: number) => {
         if (!editData) return;
@@ -61,14 +69,14 @@ function NoveltyDetailTable({ selectedPeriodId }: Props) {
         const { success } = await updateNovelty(payload);
         if (success) {
             resetEditState();
-            searchNovelty(`eq=file.id:${id}`, currentPage);
+            searchNovelty(`eq=file.id:${id};eq=settlementPeriod.month:${selectedMonth};eq=settlementPeriod.year:${selectedYear}`, currentPage);
         }
     };
 
     const handleDisable = async (noveltyId: number) => {
         const { success } = await disableNovelty(noveltyId);
         if (success) {
-            searchNovelty(`eq=file.id:${id}`, currentPage);
+            searchNovelty(`eq=file.id:${id};eq=settlementPeriod.month:${selectedMonth};eq=settlementPeriod.year:${selectedYear}`, currentPage);
         }
     };
 
@@ -84,7 +92,7 @@ function NoveltyDetailTable({ selectedPeriodId }: Props) {
                 origin: ''
             }));
             setShowNewRow(false);
-            searchNovelty(`eq=file.id:${id}`, currentPage);
+            searchNovelty(`eq=file.id:${id};eq=settlementPeriod.month:${selectedMonth};eq=settlementPeriod.year:${selectedYear}`, currentPage);
         }
     };
 
@@ -95,16 +103,11 @@ function NoveltyDetailTable({ selectedPeriodId }: Props) {
 
     const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 
-    const activePeriod = selectedPeriodId
-        ? novelties?.data.results[0]?.settlementPeriod
-        : settlementPeriodLast;
-
     const formatMonthYear = () => {
-        if (!activePeriod) return 'Período no disponible';
-        const date = new Date(activePeriod.year, activePeriod.month - 1);
+        if (!selectedMonth || !selectedYear) return 'Período no disponible';
+        const date = new Date(selectedYear, selectedMonth - 1);
         return `${capitalize(date.toLocaleDateString('es-AR', { month: 'long' }))} ${date.getFullYear()}`;
     };
-
 
     const handleEdit = (index: number, data: NoveltyRequest) => {
         setEditIndex(index);
@@ -115,23 +118,51 @@ function NoveltyDetailTable({ selectedPeriodId }: Props) {
         setEditData(prev => prev ? { ...prev, [field]: value } : null);
     };
 
-
     return (
-        <div className="p-4 bg-white md:w-2/3">
-            <div className="flex justify-between items-center mb-4">
-                <h2 className="rounded-md text-base font-semibold bg-blue-900 text-white px-4 py-1 w-fit">
-                    {formatMonthYear()}
-                </h2>
+        <div className="p-4 bg-white w-full">
+            <div className="grid grid-cols-2 items-center mb-4">
+                <div className="flex items-center space-x-2">
+                    <select
+                        value={selectedMonth ?? ''}
+                        onChange={e => setSelectedMonth(Number(e.target.value))}
+                        className="font-semibold text-white bg-blue-900 rounded-md p-1 text-sm"
+                    >
+                        <option className='bg-white text-neutral-800' value="">Mes</option>
+                        {Array.from({ length: 12 }, (_, i) => (
+                            <option className='bg-white text-neutral-800' key={i + 1} value={i + 1}>
+                                {capitalize(new Date(0, i).toLocaleString('es-AR', { month: 'long' }))}
+                            </option>
+                        ))}
+                    </select>
+
+                    <select
+                        value={selectedYear ?? ''}
+                        onChange={e => setSelectedYear(Number(e.target.value))}
+                        className="font-semibold text-white bg-blue-900 rounded-md p-1 text-sm"
+                    >
+                        <option className='bg-white text-neutral-800' value="">Año</option>
+                        {settlementPeriodLast && (
+                            <>
+                                <option className='bg-white text-neutral-800' value={settlementPeriodLast.year}>{settlementPeriodLast.year}</option>
+                                <option className='bg-white text-neutral-800' value={settlementPeriodLast.year - 1}>{settlementPeriodLast.year - 1}</option>
+                                <option className='bg-white text-neutral-800' value={settlementPeriodLast.year + 1}>{settlementPeriodLast.year + 1}</option>
+                            </>
+                        )}
+                    </select>
+                </div>
+
                 {!showNewRow && (
                     <button
                         onClick={() => setShowNewRow(true)}
-                        className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700 text-sm"
-                        disabled={!activePeriod}
+                        className="w-40 bg-blue-900 font-semibold text-white px-4 py-1 rounded hover:bg-blue-700 text-sm cursor-pointer"
+                        disabled={!selectedMonth || !selectedYear}
                     >
                         Crear novedad
                     </button>
                 )}
             </div>
+
+            <h2 className="text-base font-semibold text-gray-700 mb-2">{formatMonthYear()}</h2>
 
             {loading && <p className="text-center py-4">Cargando...</p>}
             {error && <p className="text-center text-red-500 py-4">{error || 'Error al cargar datos'}</p>}

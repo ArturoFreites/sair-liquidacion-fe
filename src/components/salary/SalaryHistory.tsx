@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNoveltySearch } from "../../hook/novelty/useNoveltySearch";
+import { formatPeriod } from "../../utils/format";
 
 type Props = {
     fileId: string;
@@ -25,13 +26,6 @@ function SalaryHistory({ fileId }: Props) {
         });
     };
 
-    const formatPeriod = (month: number, year: number) => {
-        const date = new Date(year, month - 1);
-        return date
-            .toLocaleDateString("es-AR", { year: "numeric", month: "long" })
-            .replace(" de ", " ");
-    };
-
     const windowSize = 5;
     const windowStart = Math.floor(page / windowSize) * windowSize;
     const windowEnd = Math.min(windowStart + windowSize - 1, totalPages - 1);
@@ -41,15 +35,14 @@ function SalaryHistory({ fileId }: Props) {
     );
 
     return (
-        <div className="md:items-baseline w-full flex flex-col items-center">
-            <h3 className="bg-indigo-400 w-fit rounded-md p-2 text-sm text-white font-semibold mt-6 md:mb-2 md:mr-10">
+        <div className="w-full flex flex-col items-center justify-center md:w-8/12 md:items-baseline md:pr-12">
+            <h3 className="pb-2 md:pl-6 text-sm text-neutral-900 font-semibold mt-6 md:mt-0 md:mb-2">
                 Historial
             </h3>
 
-            <div className="w-full mt-4">
+            <div className="w-full px-6">
                 <div className="flex w-full justify-between bg-neutral-200 px-4 py-2 rounded-md text-sm font-semibold">
                     <p>Monto</p>
-                    <p>Fecha</p>
                     <p>Periodo</p>
                 </div>
 
@@ -66,9 +59,6 @@ function SalaryHistory({ fileId }: Props) {
                                     className="flex justify-between px-4 py-2 text-xs md:text-sm"
                                 >
                                     <span>{formatCurrency(n.value)}</span>
-                                    <span>
-                                        {new Date(n.updatedAt).toLocaleDateString("es-AR")}
-                                    </span>
                                     <span className="capitalize">
                                         {n.settlementPeriod
                                             ? formatPeriod(

@@ -1,4 +1,5 @@
 import type { File } from "../types/models/File";
+import { formatDni } from "../utils/format";
 
 type Props = {
     file?: File
@@ -16,7 +17,7 @@ function PersonResume({ file }: Props) {
                 </div>
                 <div className="my-2">
                     <h4 className="text-sm font-semibold">DNI</h4>
-                    <p className="text-sm">{file?.person.dni}</p>
+                    <p className="text-sm">{formatDni(file?.person.dni)}</p>
                 </div>
                 <div className="my-2">
                     <h4 className="text-sm font-semibold">Razón Social</h4>

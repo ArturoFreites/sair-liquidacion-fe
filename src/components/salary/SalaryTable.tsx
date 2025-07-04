@@ -7,6 +7,7 @@ import { useFileSearch } from '../../hook/file/useFileSearch';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import { formatDni } from '../../utils/format';
 
 export default function SalaryTable() {
 	const [page, setPage] = useState(0);
@@ -53,7 +54,7 @@ export default function SalaryTable() {
                     DNI {sortBy === 'person.dni' && (sortDir === 'asc' ? <ChevronUp height={15} width={15}/> : <ChevronDown height={15} width={15} />)}
 				</span>
 			),
-			accessor: (b) => b.person.dni,
+			accessor: (b) => formatDni(b.person.dni),
 			cell: (v) => <span className="tabular-nums">{v as number}</span>,
 		},
 		{
