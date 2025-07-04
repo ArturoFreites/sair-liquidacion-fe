@@ -11,8 +11,8 @@ import { useSettlementPeriodCreate } from '../../hook/settlementPeriod/useSettle
 function SettlementPeriodCreatePage() {
     const { showError } = useErrorModalStore.getState();
 
-    const [month, setMonth] = useState(1);
-    const [year, setYear] = useState(2025);
+    const [month, setMonth] = useState('1');
+    const [year, setYear] = useState('2025');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [type, setType] = useState('');
@@ -20,8 +20,8 @@ function SettlementPeriodCreatePage() {
     const { createSettlementPeriod, loading: creating, error } = useSettlementPeriodCreate();
 
     const resetForm = () => {
-        setMonth(1);
-        setYear(2025);
+        setMonth('1');
+        setYear('2025');
         setStartDate('');
         setEndDate('');
         setType('');
@@ -43,13 +43,13 @@ function SettlementPeriodCreatePage() {
         }
 
         const payload: SettlementPeriodRequest = {
-            id:0,
-            month,
-            year,
-            startDate: startDate ? new Date(startDate) : new Date,
-            endDate: endDate ? new Date(endDate) : new Date,
+            id: 0,
+            month: Number(month),
+            year: Number(year),
+            startDate: new Date(startDate),
+            endDate: new Date(endDate),
             type,
-            status:""
+            status: ''
         };
 
         const { success } = await createSettlementPeriod(payload);
@@ -74,20 +74,33 @@ function SettlementPeriodCreatePage() {
                     label="Mes *"
                     placeHolder="Ingrese mes"
                     type="number"
-                    value={String(month)}
-                    onChange={(e) => setMonth(Number(e.target.value))}
-
+                    value={month}
+                    onChange={(e) => setMonth(e.target.value)}
                 />
+
                 <Input
                     label="Año *"
                     placeHolder="Ingrese año"
                     type="number"
-                    value={String(year)}
-                    onChange={(e) => setYear(Number(e.target.value))}
+                    value={year}
+                    onChange={(e) => setYear(e.target.value)}
                 />
 
-                <Input label="Fecha de Inicio" type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} placeHolder='' />
-                <Input label="Fecha de Finalización" type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} placeHolder='' />
+                <Input
+                    label="Fecha de Inicio"
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    placeHolder=""
+                />
+
+                <Input
+                    label="Fecha de Finalización"
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    placeHolder=""
+                />
 
                 <Dropdown<DropdownValue, string>
                     label="Tipo *"
@@ -96,9 +109,8 @@ function SettlementPeriodCreatePage() {
                     onChange={setType}
                     getOptionLabel={(o) => o.name}
                     getOptionValue={(o) => o.name}
-                    placeholder={"Seleccione tipo"}
+                    placeholder="Seleccione tipo"
                 />
-
             </div>
 
             <div className="flex w-full justify-center mt-24">
