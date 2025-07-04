@@ -18,4 +18,5 @@ export interface File {
     createdAt: Date;
     updatedAt: Date;
     deletedAt: Date;
+    [key: string]: unknown;
 }

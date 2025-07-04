@@ -86,6 +86,7 @@ function BundlesCreatePage() {
         }
 
         const payload: FileRequest = {
+            id:0,
             name, lastName, dni, cuit,
             birthday: birthday ? new Date(birthday) : new Date,
             workstation, cbu,
@@ -116,7 +117,7 @@ function BundlesCreatePage() {
     };
 
     return (
-        <form>
+        <form onSubmit={handleSubmit}>
             <div className="m-6">
                 <h1 className="text-2xl font-black">LEGAJOS</h1>
                 <h2 className="text-xl font-medium">Alta</h2>
@@ -188,7 +189,6 @@ function BundlesCreatePage() {
             <div className="flex w-full justify-center mt-24">
                 <ButtonAction
                     name={creating ? "Guardando..." : "Guardar"}
-                    onClick={handleSubmit}
                     type='submit'
                     className="font-semibold bg-blue-900 text-white hover:bg-blue-700"
                 />

@@ -10,6 +10,7 @@ export interface Novelty {
     concept:Concept;
     settlementPeriod:SettlementPeriod;
     value:number;
+    quota:number;
     totalQuota:number;
     origin: string;
     status: string;

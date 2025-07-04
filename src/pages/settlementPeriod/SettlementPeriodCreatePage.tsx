@@ -43,11 +43,13 @@ function SettlementPeriodCreatePage() {
         }
 
         const payload: SettlementPeriodRequest = {
+            id:0,
             month,
             year,
             startDate: startDate ? new Date(startDate) : new Date,
             endDate: endDate ? new Date(endDate) : new Date,
             type,
+            status:""
         };
 
         const { success } = await createSettlementPeriod(payload);
@@ -72,15 +74,16 @@ function SettlementPeriodCreatePage() {
                     label="Mes *"
                     placeHolder="Ingrese mes"
                     type="number"
-                    value={month}
-                    onChange={(e) => setMonth(e.target.value)}
+                    value={String(month)}
+                    onChange={(e) => setMonth(Number(e.target.value))}
+
                 />
                 <Input
                     label="Año *"
                     placeHolder="Ingrese año"
                     type="number"
-                    value={year}
-                    onChange={(e) => setYear(e.target.value)}
+                    value={String(year)}
+                    onChange={(e) => setYear(Number(e.target.value))}
                 />
 
                 <Input label="Fecha de Inicio" type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} placeHolder='' />
@@ -101,7 +104,6 @@ function SettlementPeriodCreatePage() {
             <div className="flex w-full justify-center mt-24">
                 <ButtonAction
                     name={creating ? 'Guardando...' : 'Guardar'}
-                    onClick={handleSubmit}
                     type="submit"
                     className="font-semibold bg-blue-900 text-white hover:bg-blue-700"
                 />

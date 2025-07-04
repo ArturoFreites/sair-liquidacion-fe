@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
 import type { ApiResponse } from '../../types/api/ApiResponse';
-import type { AxiosError } from 'axios';
 import api from '../../api/axiosConfig';
 
 export function useNoveltyCreate() {
@@ -13,9 +13,8 @@ export function useNoveltyCreate() {
         try {
             await api.put<ApiResponse<null>>(`/novelty/disatble/${id}`);
             return { success: true };
-        } catch (err) {
-            const axiosError = err as AxiosError<{ message: string }>;
-            setError(axiosError.response?.data?.message || 'Error al desactivar Novedad');
+        } catch (err:any) {
+            setError(err.response?.data?.message || 'Error al desactivar Novedad');
             return { success: false };
         } finally {
             setLoading(false);

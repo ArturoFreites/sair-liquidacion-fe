@@ -1,15 +1,19 @@
-import { Table, type TableProps } from './Table';
+import { Table, type Column } from './Table';
 import Skeleton from 'react-loading-skeleton';
 
-interface PaginatedTableProps<T> extends Omit<TableProps<T>, 'data'> {
-    data?: T[];
-    loading?: boolean;
+type PaginatedTableProps<T> = {
+    url: string;
+    data: T[];
+    columns: Column<T>[];
+    keyField: keyof T;
+    getRowTitle?: (row: T) => string;
+    loading: boolean;
     page: number;
     totalPages: number;
     onPageChange: (page: number) => void;
-}
+};
 
-export function PaginatedTable<T>({
+export function PaginatedTable<T extends Record<string, unknown>>({
     url,
     data = [],
     columns,
@@ -31,7 +35,7 @@ export function PaginatedTable<T>({
     return (
         <div className="w-full">
             {loading ? (
-                <Skeleton rows={10} />
+                <Skeleton />
             ) : data.length === 0 ? (
                 <p className="text-center text-gray-500 mt-4">No hay elementos para mostrar.</p>
             ) : (

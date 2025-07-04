@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
 import type { PaginatedApiResponse } from '../../types/api/ApiResponse';
 import api from '../../api/axiosConfig';
-import type { AxiosError } from 'axios';
 import type { Concept } from '../../types/models/Concept';
 
 export function useConceptSearch() {
@@ -17,9 +17,8 @@ export function useConceptSearch() {
                 `/concept?${query}&page=${page}`
             );
             setResults(response.data);
-        } catch (err) {
-            const axiosError = err as AxiosError<{ message: string }>;
-            setError(axiosError.response?.data?.message || 'Error al buscar Conceptos.');
+        } catch (err:any) {
+            setError(err.response?.data?.message || 'Error al buscar Conceptos.');
         } finally {
             setLoading(false);
         }

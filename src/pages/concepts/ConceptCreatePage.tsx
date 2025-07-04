@@ -120,7 +120,6 @@ function ConceptCreatePage() {
             <div className="flex w-full justify-center mt-24">
                 <ButtonAction
                     name={creating ? 'Guardando...' : 'Guardar'}
-                    onClick={handleSubmit}
                     type="submit"
                     className="font-semibold bg-blue-900 text-white hover:bg-blue-700"
                 />

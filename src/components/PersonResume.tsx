@@ -1,7 +1,7 @@
 import type { File } from "../types/models/File";
 
 type Props = {
-    file: File
+    file?: File
 }
 
 function PersonResume({ file }: Props) {
@@ -28,7 +28,9 @@ function PersonResume({ file }: Props) {
                 </div>
                 <div className="my-2">
                     <h4 className="text-sm font-semibold">Fecha de Alta</h4>
-                    <p className="text-sm">{new Date(file?.createdAt).toLocaleDateString()}</p>
+                    <p className="text-sm">
+                        {file?.createdAt ? new Date(file.createdAt).toLocaleDateString() : '-'}
+                    </p>
                 </div>
             </div>
         </div>

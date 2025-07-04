@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
 import type { ApiResponse } from '../../types/api/ApiResponse';
-import type { AxiosError } from 'axios';
 import api from '../../api/axiosConfig';
 import type { SettlementPeriodRequest } from '../../types/request/SettlementPeriodRequest';
 
@@ -14,9 +14,8 @@ export function useSettlementPeriodCreate() {
         try {
             await api.post<ApiResponse<null>>('/settlementPeriod', payload);
             return { success: true };
-        } catch (err) {
-            const axiosError = err as AxiosError<{ message: string }>;
-            setError(axiosError.response?.data?.message || 'Error al crear el periodo');
+        } catch (err:any) {
+            setError(err.response?.data?.message || 'Error al crear el periodo');
             return { success: false };
         } finally {
             setLoading(false);

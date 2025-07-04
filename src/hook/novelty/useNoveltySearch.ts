@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
 import type { PaginatedApiResponse } from '../../types/api/ApiResponse';
 import api from '../../api/axiosConfig';
-import type { AxiosError } from 'axios';
 import type { Novelty } from '../../types/models/Novelty';
 
 export function useNoveltySearch() {
@@ -17,9 +17,8 @@ export function useNoveltySearch() {
                 `/novelty?${query}&page=${page}`
             );
             setResults(response.data);
-        } catch (err) {
-            const axiosError = err as AxiosError<{ message: string }>;
-            setError(axiosError.response?.data?.message || 'Error al buscar Novedades.');
+        } catch (err:any) {
+            setError(err.response?.data?.message || 'Error al buscar Novedades.');
         } finally {
             setLoading(false);
         }

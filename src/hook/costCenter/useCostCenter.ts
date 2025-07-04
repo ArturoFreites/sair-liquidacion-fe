@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
 import type { PaginatedApiResponse } from '../../types/api/ApiResponse';
 import api from '../../api/axiosConfig';
-import type { AxiosError } from 'axios';
 import type { CostCenter } from '../../types/models/CostCenter';
 
 export function useCostCenterSearcher() {
@@ -15,9 +15,8 @@ export function useCostCenterSearcher() {
         try {
             const response = await api.get<PaginatedApiResponse<CostCenter[]>>(`/costCenter?${query}`);
             setResults(response.data);
-        } catch (err) {
-            const axiosError = err as AxiosError<{ message: string }>;
-            setError(axiosError.response?.data?.message);
+        } catch (err:any) {
+            setError(err.response?.data?.message);
         } finally {
             setLoading(false);
         }

@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import type {FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Input from '../../components/Input';
 import { Dropdown } from '../../components/Dropdown';
@@ -10,22 +9,26 @@ import { useBankSearcher } from '../../hook/bank/useBank';
 import { useCostCenterSearcher } from '../../hook/costCenter/useCostCenter';
 import { useSocialReasonSearch } from '../../hook/socialReason/useSocialReasonSearch';
 import { useFileFind } from '../../hook/file/useFileFind';
+import { useFileUpdate } from '../../hook/file/useFileUpdate';
 
 import type { Bank } from '../../types/models/Bank';
 import type { CostCenter } from '../../types/models/CostCenter';
 import type { SocialReason } from '../../types/models/SocialReason';
 import type { FileRequest } from '../../types/request/FileRequest';
 import { useErrorModalStore } from '../../store/errorModalStore';
-import { useFileUpdate } from '../../hook/file/useFileUpdate';
 
 function BundlesUpdatePage() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const { showError } = useErrorModalStore.getState();
 
-    const toISODate = (s?: string | null) => s ? s.split(' ')[0] : '';
+    const toISODate = (s?: string | Date | null) => {
+        if (!s) return '';
+        if (typeof s === 'string') return s.split('T')[0].split(' ')[0];
+        return s.toISOString().split('T')[0];
+    };
 
-    /* ------------ hooks de búsqueda ------------ */
+    // Hooks
     const { findFile, result: file, loading: loadingFile } = useFileFind();
     const { updateFile, loading: saving, error: errorSave } = useFileUpdate();
 
@@ -33,7 +36,7 @@ function BundlesUpdatePage() {
     const { searchCostCenter, results: costCenters, loading: loadingCostCenters } = useCostCenterSearcher();
     const { searchSocialReasonSearch, results: socialReasons, loading: loadingSocialReasons } = useSocialReasonSearch();
 
-    /* ------------ estado local ------------ */
+    // Estado local
     const [name, setName] = useState('');
     const [lastName, setLastName] = useState('');
     const [dni, setDni] = useState('');
@@ -49,8 +52,8 @@ function BundlesUpdatePage() {
     const [razonSocialId, setRazonSocialId] = useState<number | null>(null);
     const [costCenterId, setCostCenterId] = useState<number | null>(null);
     const [bankId, setBankId] = useState<number | null>(null);
+    const [salary, setSalary] = useState('');
 
-    /* ------------ carga inicial ------------ */
     useEffect(() => {
         if (id) findFile(id);
         searchBanks('eq=status:active');
@@ -58,7 +61,6 @@ function BundlesUpdatePage() {
         searchSocialReasonSearch('eq=status:active');
     }, [id]);
 
-    /* ------------ hidratar estados cuando llega el legajo ------------ */
     useEffect(() => {
         if (!file) return;
         setName(file.person.name);
@@ -68,7 +70,7 @@ function BundlesUpdatePage() {
         setCbu(file.cbu ?? '');
         setBirthday(toISODate(file.person.birthday));
         setStartDate(toISODate(file.createdAt));
-        setEndDate(toISODate(''));
+        setEndDate(toISODate(file.deletedAt));
         setWorkstation(file.workstation ?? '');
         setAccountingFile(file.accountingFile ?? '');
         setSalaryFactor(String(file.salaryFactor ?? ''));
@@ -76,9 +78,9 @@ function BundlesUpdatePage() {
         setRazonSocialId(file.socialReason.id);
         setCostCenterId(file.costCenter.id);
         setBankId(file.bank.id);
+        setSalary(String(file.salary ?? ''));
     }, [file]);
 
-    /* ------------ submit ------------ */
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
@@ -89,6 +91,7 @@ function BundlesUpdatePage() {
         if (!razonSocialId) missing.push('Razón social');
         if (!costCenterId) missing.push('Centro de costos');
         if (!bankId) missing.push('Banco');
+        if (!salary) missing.push('Sueldo');
 
         if (missing.length) {
             showError(`Completá los campos: ${missing.join(', ')}.`, 'caution', false);
@@ -96,35 +99,35 @@ function BundlesUpdatePage() {
         }
 
         const payload: FileRequest = {
-            id, name, lastName, dni, cuit,
+            id: Number(id),
+            name,
+            lastName,
+            dni,
+            cuit,
             birthday: birthday ? new Date(birthday) : undefined,
-            workstation, cbu,
+            workstation,
+            cbu,
             salaryFactor: salaryFactor ? parseFloat(salaryFactor) : undefined,
             accountingFile,
             settleCommissions,
             socialReasonId: razonSocialId!,
             costCenterId: costCenterId!,
-            bankId: bankId!
+            bankId: bankId!,
+            salary: parseFloat(salary)
         };
 
         const { success } = await updateFile(payload);
         if (success) {
             showError('Legajo actualizado correctamente', 'ok', false);
-            navigate(-1); // volver a la lista
+            navigate(-1);
         } else {
             showError(errorSave || 'Error al actualizar el legajo', 'caution', false);
         }
     };
 
-    if (loadingFile) {
-        return <p className="p-6">Cargando legajo...</p>;
-    }
+    if (loadingFile) return <p className="p-6">Cargando legajo...</p>;
+    if (!file) return <p className="p-6 text-red-600">No se encontró el legajo</p>;
 
-    if (!file) {
-        return <p className="p-6 text-red-600">No se encontró el legajo</p>;
-    }
-
-    /* ------------ UI ------------ */
     return (
         <form onSubmit={handleSubmit}>
             <div className="m-6">
@@ -163,12 +166,12 @@ function BundlesUpdatePage() {
                     placeholder={loadingCostCenters ? 'Cargando...' : 'Seleccione centro de costos'}
                 />
 
-                <Input label="Puesto" type="text" value={workstation} onChange={e => setWorkstation(e.target.value)}  placeHolder=''/>
-                <Input label="Fecha de Nacimiento" type="date" value={birthday} onChange={e => setBirthday(e.target.value)}  placeHolder='' />
-                <Input label="Fecha de Alta" type="date" value={startDate} onChange={e => setStartDate(e.target.value)}  placeHolder='' />
-                <Input label="Cuit" type="text" value={cuit} onChange={e => setCuit(e.target.value)}  placeHolder='' />
-                <Input label="CBU" type="text" value={cbu} onChange={e => setCbu(e.target.value)}  placeHolder='' />
-                <Input label="Legajo Contable" type="text" value={accountingFile} onChange={e => setAccountingFile(e.target.value)}  placeHolder='' />
+                <Input label="Puesto" type="text" value={workstation} onChange={e => setWorkstation(e.target.value)} placeHolder='' />
+                <Input label="Fecha de Nacimiento" type="date" value={birthday} onChange={e => setBirthday(e.target.value)} placeHolder='' />
+                <Input label="Fecha de Alta" type="date" value={startDate} onChange={e => setStartDate(e.target.value)} placeHolder='' />
+                <Input label="Cuit" type="text" value={cuit} onChange={e => setCuit(e.target.value)} placeHolder='' />
+                <Input label="CBU" type="text" value={cbu} onChange={e => setCbu(e.target.value)} placeHolder='' />
+                <Input label="Legajo Contable" type="text" value={accountingFile} onChange={e => setAccountingFile(e.target.value)} placeHolder='' />
 
                 <Dropdown<Bank, number>
                     label="Banco *"
@@ -180,15 +183,9 @@ function BundlesUpdatePage() {
                     placeholder={loadingBanks ? 'Cargando...' : 'Seleccione banco'}
                 />
 
-                <Input
-                    label="Factor Sueldo"
-                    type="number"
-                    value={salaryFactor}
-                    onChange={e => setSalaryFactor(e.target.value)}
-                    placeHolder='Ingrese Factor Sueldo'
-                />
-
-                <Input label="Fecha de Baja" type="date" value={startDate} onChange={e => setStartDate(e.target.value)}  placeHolder='' />
+                <Input label="Factor Sueldo" type="number" value={salaryFactor} onChange={e => setSalaryFactor(e.target.value)} placeHolder='Ingrese Factor Sueldo' />
+                <Input label="Sueldo *" type="number" value={salary} onChange={e => setSalary(e.target.value)} placeHolder='Ingrese Sueldo' />
+                <Input label="Fecha de Baja" type="date" value={endDate} onChange={e => setEndDate(e.target.value)} placeHolder='' />
 
                 <div className="col-span-1 md:col-span-3">
                     <Checkbox

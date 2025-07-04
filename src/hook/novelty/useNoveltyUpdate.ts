@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
 import type { ApiResponse } from '../../types/api/ApiResponse';
-import type { AxiosError } from 'axios';
 import api from '../../api/axiosConfig';
 import type { NoveltyRequest } from '../../types/request/NoveltyRequest';
 
@@ -14,9 +14,8 @@ export function useNoveltyUpdate() {
         try {
             await api.put<ApiResponse<null>>('/novelty', payload);
             return { success: true };
-        } catch (err) {
-            const axiosError = err as AxiosError<{ message: string }>;
-            setError(axiosError.response?.data?.message || 'Error al actualizar Novedad');
+        } catch (err:any) {
+            setError(err.response?.data?.message || 'Error al actualizar Novedad');
             return { success: false };
         } finally {
             setLoading(false);

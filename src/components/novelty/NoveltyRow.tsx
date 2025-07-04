@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Pencil, Trash, Save, X } from 'lucide-react';
 import type { Novelty } from '../../types/models/Novelty';
 import type { NoveltyRequest } from '../../types/request/NoveltyRequest';

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Plus, X } from 'lucide-react';
 import { useEffect } from 'react';
 import type { NoveltyRequest } from '../../types/request/NoveltyRequest';

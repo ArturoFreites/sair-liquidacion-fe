@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { FileRequest } from './../../types/request/FileRequest';
 import { useState } from 'react';
 import type { ApiResponse } from '../../types/api/ApiResponse';
-import type { AxiosError } from 'axios';
 import api from '../../api/axiosConfig';
 
 export function useFileCreate() {
@@ -14,9 +14,8 @@ export function useFileCreate() {
         try {
             await api.post<ApiResponse<null>>('/file', payload);
             return { success: true };
-        } catch (err) {
-            const axiosError = err as AxiosError<{ message: string }>;
-            setError(axiosError.response?.data?.message || 'Error al crear legajo');
+        } catch (err:any) {
+            setError(err.response?.data?.message || 'Error al crear legajo');
             return { success: false };
         } finally {
             setLoading(false);

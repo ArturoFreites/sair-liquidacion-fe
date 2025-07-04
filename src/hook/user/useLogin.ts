@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
 import api from '../../api/axiosConfig';
-import type { AxiosError } from 'axios';
 import { useNavigate } from 'react-router-dom';
 import type { ApiResponse } from '../../types/api/ApiResponse';
 import type { User } from '../../types/models/User';
@@ -28,9 +28,8 @@ export function useLogin() {
             localStorage.setItem('email', response.data.data.email);
             navigate("/")
             return { success: true };
-        } catch (err) {
-            const axiosError = err as AxiosError<{ message: string }>;
-            setError(axiosError.response?.data?.message || 'Login failed');
+        } catch (err:any) {
+            setError(err.response?.data?.message || 'Error al loguearse');
             return { success: false };
         } finally {
             setLoading(false);
