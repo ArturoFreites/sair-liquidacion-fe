@@ -43,13 +43,11 @@ function SettlementPeriodCreatePage() {
         }
 
         const payload: SettlementPeriodRequest = {
-            id: 0,
             month: Number(month),
             year: Number(year),
             startDate: new Date(startDate),
             endDate: new Date(endDate),
             type,
-            status: ''
         };
 
         const { success } = await createSettlementPeriod(payload);

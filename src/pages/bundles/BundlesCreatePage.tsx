@@ -86,7 +86,6 @@ function BundlesCreatePage() {
         }
 
         const payload: FileRequest = {
-            id:0,
             name, lastName, dni, cuit,
             birthday: birthday ? new Date(birthday) : new Date,
             workstation, cbu,

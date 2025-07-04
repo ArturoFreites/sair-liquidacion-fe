@@ -1,9 +1,9 @@
 export interface SettlementPeriodRequest {
-    id:string
+    id?:number
     month:number,
     year:number,
     startDate:Date,
     endDate:Date,
     type:string,
-    status:string
+    status?:string
 }

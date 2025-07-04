@@ -1,5 +1,5 @@
 export type FileRequest = {
-    id: number;
+    id?: number;
     name: string;
     lastName: string;
     dni: string;
