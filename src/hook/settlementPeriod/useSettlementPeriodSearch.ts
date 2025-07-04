@@ -9,7 +9,7 @@ export function useSettlementPeriodSearch() {
     const [error, setError] = useState<string | null>(null);
     const [results, setResults] = useState<PaginatedApiResponse<SettlementPeriod[]>>();
 
-    const searchSettlementPeriod = async (query: string, page: number = 1): Promise<void> => {
+    const searchSettlementPeriod = async (query: string, page: number = 0): Promise<void> => {
         setLoading(true);
         setError(null);
         try {

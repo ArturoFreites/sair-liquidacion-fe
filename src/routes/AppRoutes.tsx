@@ -20,6 +20,8 @@ import SettlementPeriodPage from "../pages/settlementPeriod/SettlementPeriodPage
 import SettlementPeriodCreatePage from "../pages/settlementPeriod/SettlementPeriodCreatePage";
 import NoveltyPage from "../pages/novelty/NoveltyPage";
 import NoveltyDetailPage from "../pages/novelty/NoveltyDetailPage";
+import SalaryPage from "../pages/salary/SalaryPage";
+import SalaryDetailPage from "../pages/salary/SalaryDetailPage";
 
 // ✅ Hook que verifica si hay token
 function useAuth() {
@@ -64,6 +66,8 @@ const privateRoutes = [
     { path: ROUTES.CREATE_SETTLEMENT_PERIOD, element: <SettlementPeriodCreatePage /> },
     { path: ROUTES.NOVELTY, element: <NoveltyPage /> },
     { path: ROUTES.DETAIL_NOVELTY, element: <NoveltyDetailPage /> },
+    { path: ROUTES.SALARY, element: <SalaryPage /> },
+    { path: ROUTES.SALARY_DETAIL, element: <SalaryDetailPage /> },
 ];
 
 // ✅ AppRoutes con control de acceso

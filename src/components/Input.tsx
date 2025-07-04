@@ -5,11 +5,12 @@ type Props = {
     type:string,
     value: string;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    className?:string
 }
 
-export default function Input({label,placeHolder,type,value,onChange}:Props) {
+export default function Input({label,placeHolder,type,value,onChange,className}:Props) {
     return (
-        <div className='my-2 mx-6 xl:m-5'>
+        <div className={`my-2 mx-6 xl:m-5 `+ className}>
             <p className='mb-3 text-sm'>
                 {label}
             </p>

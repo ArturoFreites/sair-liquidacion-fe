@@ -3,6 +3,8 @@ export const ROUTES = {
     BUNDLES: '/legajos',
     CREATE_BUNDLE:'/legajos/crear',
     UPDATE_BUNDLE:'/legajos/actualizar/:id',
+    SALARY:'/sueldos',
+    SALARY_DETAIL:'/sueldos/detalle/:id',
     CONCEPTS:'/conceptos',
     CREATE_CONCEPT:'/conceptos/crear',
     UPDATE_CONCEPT:'/conceptos/actualizar/:id',

@@ -14,6 +14,7 @@ export const NAVLINKS = [
         options:[
             "conceptos",
             "novedades",
+            "sueldos",
             "ejecutar liquidación"
         ]
     },

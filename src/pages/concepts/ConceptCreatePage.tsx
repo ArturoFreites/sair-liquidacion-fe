@@ -14,7 +14,6 @@ function ConceptCreatePage() {
     const [name, setName] = useState('');
     const [impact, setImpact] = useState('');
     const [typeValue, setTypeValue] = useState('');
-    const [value, setValue] = useState<number | ''>('');
     const [frequency, setFrequency] = useState('');
     const [paymentType, setPaymentType] = useState('');
 
@@ -24,7 +23,6 @@ function ConceptCreatePage() {
         setName('');
         setImpact('');
         setTypeValue('');
-        setValue('');
         setFrequency('');
         setPaymentType('');
     };
@@ -36,9 +34,7 @@ function ConceptCreatePage() {
         if (!name) missing.push('Nombre');
         if (!impact) missing.push('Impacto');
         if (!typeValue) missing.push('Tipo de valor');
-        if (value === '' || value === null || value === undefined) missing.push('Valor');
         if (!frequency) missing.push('Frecuencia');
-        if (!paymentType) missing.push('Tipo de pago');
 
         if (missing.length) {
             showError(`Completá los siguientes campos obligatorios: ${missing.join(', ')}.`, 'caution', false);
@@ -46,12 +42,13 @@ function ConceptCreatePage() {
         }
 
         const payload: ConceptRequest = {
+            id:1,
             name,
             impact,
             typeValue,
-            value: typeof value === 'string' ? parseFloat(value) : value,
             frequency,
             paymentType,
+            status:""
         };
 
         const { success } = await createConcept(payload);
@@ -97,14 +94,6 @@ function ConceptCreatePage() {
                     getOptionLabel={(o) => o.name}
                     getOptionValue={(o) => o.name}
                     placeholder="Seleccione un tipo"
-                />
-
-                <Input
-                    label="Valor *"
-                    placeHolder="Ingrese valor"
-                    type="number"
-                    value={value}
-                    onChange={(e) => setValue(e.target.value === '' ? '' : parseFloat(e.target.value))}
                 />
 
                 <Dropdown<DropdownValue, string>

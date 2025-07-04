@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useErrorModalStore } from '../store/errorModalStore';
 
 const api = axios.create({
-    baseURL: 'http://localhost:8080/sair/api',
+    baseURL: 'https://sair-liquidacion-be.onrender.com/sair/api',
     withCredentials: true,
 });
 

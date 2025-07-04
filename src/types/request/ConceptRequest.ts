@@ -3,7 +3,6 @@ export interface ConceptRequest {
     name:string,
     impact:string,
     typeValue:string,
-    value:number,
     frequency:string,
     paymentType:string,
     status:string

@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { ROUTES } from '../../routes/ROUTES';
-import type { File } from '../../types/models/File';
 import { PaginatedTable } from '../PaginatedTable';
 import { type Column } from '../Table';
 import Skeleton from 'react-loading-skeleton';
