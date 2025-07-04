@@ -3,8 +3,8 @@ import axios from 'axios';
 import { useErrorModalStore } from '../store/errorModalStore';
 
 const api = axios.create({
-    baseURL: 'http://localhost:8080/sair/api',
-    withCredentials: true,
+	baseURL: import.meta.env.VITE_API_URL,
+	withCredentials: true,
 });
 
 const { showError } = useErrorModalStore.getState();
