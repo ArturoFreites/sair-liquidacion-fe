@@ -1,5 +1,5 @@
 export interface NoveltySalaryRequest {
     fileId : number;
     salary:number;
-    SettlementPeriodIds:number[]
+    settlementPeriodId:number;
 }

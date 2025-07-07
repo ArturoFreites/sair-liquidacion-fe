@@ -26,8 +26,7 @@ function SalaryDetailPage() {
     const { createNoveltySalary, loading: saving, error: backendError } = useNoveltySalaryCreate();
     const { showError } = useErrorModalStore.getState();
 
-    const [selectedPeriods, setSelectedPeriods] = useState<SettlementPeriod[]>([]);
-    const [selectedPeriodId, setSelectedPeriodId] = useState<string>("");
+    const [selectedPeriodId, setSelectedPeriodId] = useState<number | null>(null);
 
     const lastNovelty = lastSalary?.data?.results?.[0];
     const currentSalaryValue = lastNovelty?.value ?? 0;
@@ -37,18 +36,6 @@ function SalaryDetailPage() {
         if (id) findFile(id);
         searchSettlementPeriod("eq=status:active");
     }, [id]);
-
-    const handleAddPeriod = () => {
-        const found = settlementPeriods?.data.results.find(p => String(p.id) === selectedPeriodId);
-        if (found && !selectedPeriods.some(p => p.id === found.id)) {
-            setSelectedPeriods(prev => [...prev, found]);
-        }
-        setSelectedPeriodId("");
-    };
-
-    const handleRemovePeriod = (id: number) => {
-        setSelectedPeriods(prev => prev.filter(p => p.id !== id));
-    };
 
     const handleSubmit = async () => {
         const parsedSalary = parseFloat(salary);
@@ -62,7 +49,7 @@ function SalaryDetailPage() {
             return;
         }
 
-        if (selectedPeriods.length === 0) {
+        if (selectedPeriodId == null) {
             showError("Debes seleccionar al menos un período.", "caution");
             return;
         }
@@ -72,18 +59,19 @@ function SalaryDetailPage() {
         const result = await createNoveltySalary({
             fileId: Number(id),
             salary: parsedSalary,
-            SettlementPeriodIds: selectedPeriods.map(p => p.id),
+            settlementPeriodId: selectedPeriodId,
         });
 
         if (result.success) {
             showError("Sueldo actualizado correctamente", "ok", false);
             setSalary("");
-            setSelectedPeriods([]);
+            setSelectedPeriodId(null);
             setReloadKey(prev => prev + 1);
+            await searchNovelty(`eq=status:active&eq=file.id:${id}&eq=concept.name:Sueldo&sort=settlementPeriod.year:desc,settlementPeriod.month:desc&page=0&size=1`);
         } else {
             showError(backendError || "Error al actualizar el sueldo", "caution", false);
         }
-    };
+    }
 
 
     return (
@@ -110,45 +98,19 @@ function SalaryDetailPage() {
                 <div className="flex flex-col items-center md:items-baseline w-full md:w-4/12">
                     <h3 className="font-semibold text-sm mt-6 md:pt-3">Actualizar Sueldo</h3>
 
-                    {/* Chips de períodos seleccionados */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-2 mt-6">
-                        {selectedPeriods.map(period => (
-                            <span
-                                key={period.id}
-                                className="flex items-center bg-blue-900 text-white text-xs px-3 py-1 rounded-full capitalize"
-                            >
-                                {formatPeriod(period.month, period.year)}
-                                <button
-                                    onClick={() => handleRemovePeriod(period.id)}
-                                    className="ml-2 text-white font-bold hover:text-gray-300"
-                                >
-                                    ✕
-                                </button>
-                            </span>
-                        ))}
-
-                    </div>
-
                     {/* Dropdown para agregar período */}
                     <div className="flex flex-col gap-2 mb-4 w-full md:items-baseline justify-center items-center">
-                        <Dropdown<SettlementPeriod, string>
+                        <Dropdown<SettlementPeriod, number>
                             label="Período"
                             options={settlementPeriods?.data.results || []}
                             value={selectedPeriodId}
                             onChange={setSelectedPeriodId}
                             getOptionLabel={(o) => formatPeriod(o.month, o.year)}
-                            getOptionValue={(o) => String(o.id)}
+                            getOptionValue={(o) => o.id}
                             placeholder={settlementPeriodLoading ? "Cargando períodos..." : "Seleccione un período"}
                             className="mx-0 w-fit md:w-8/12"
                         />
-                        <button
-                            onClick={handleAddPeriod}
-                            className="text-xs font-semibold px-3 py-2 bg-blue-900 text-white rounded hover:bg-blue-700 w-40 cursor-pointer"
-                        >
-                            Agregar
-                        </button>
                     </div>
-
                     <Input
                         type="number"
                         label="Sueldo"

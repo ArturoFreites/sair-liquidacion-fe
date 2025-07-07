@@ -12,7 +12,7 @@ export function useNoveltySalaryCreate() {
         setLoading(true);
         setError(null); 
         try {
-            await api.post<ApiResponse<null>>('/novelty/salary', payload);
+            await api.put<ApiResponse<null>>('/novelty/salary', payload);
             return { success: true };
         } catch (err:any) {
             setError(err.response?.data?.message || 'Error al actualizar Sueldo');
